@@ -1,0 +1,23 @@
+# CI: build sdist/wheel and validate metadata on every push/PR — no PyPI upload.
+
+name: build-check-pypi
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build twine
+      - name: Build sdist and wheel
+        run: python -m build
+      - name: Check package metadata
+        run: twine check dist/*
